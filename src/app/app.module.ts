@@ -1,3 +1,4 @@
+import { AppRoutingModule } from "./app.routing.module";
 import { PostService } from "./posts/posts.service";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { BrowserModule } from "@angular/platform-browser";
@@ -33,7 +34,8 @@ import { HttpClientModule } from "@angular/common/http";
     MatButtonModule,
     MatToolbarModule,
     MatExpansionModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [PostService],
   bootstrap: [AppComponent]
