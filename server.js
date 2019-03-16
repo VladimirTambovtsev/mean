@@ -1,6 +1,17 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+import mongoose from 'mongoose'
+
+import Post from './models/Post'
+
+require('dotenv').config()	// reads env file
+
+mongoose.Promise = global.Promise
+mongoose.connect(process.env.DATABASE)
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.log(err))
+
 
 const app = express()
 
@@ -8,18 +19,14 @@ app.use(cors());
 app.use(bodyParser.json())
 
 
-app.get('/api/posts', (req, res) => {
-    const posts = [
-        { id: '1', title: "Title 1", content: "content 1" },
-        { id: '2', title: "Title 2", content: "content 2" },
-        { id: '3', title: "Title 3", content: "content 3" }
-    ];
+app.get('/api/posts', async (req, res) => {
+    const posts = await Post.find({})
     res.status(200).json(posts)
 })
 
-app.post('/api/posts', (req, res) => {
-    const post = req.body
-    console.log('post ', post)
+app.post('/api/posts', async (req, res) => {
+    const post = new Post({title: req.body.title, content: req.body.content})
+    await post.save()
     res.status(200).json(post)
 })
 
