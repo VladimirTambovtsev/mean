@@ -1,6 +1,7 @@
 import { Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 
 import { Post } from "./post.model";
 
@@ -9,17 +10,17 @@ export class PostService {
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
+
+  getPost(id: string) {
+    return this.http.get<Post>(`http://localhost:8080/api/posts/${id}`);
+  }
 
   getPosts() {
     this.http.get<Post[]>("http://localhost:8080/api/posts").subscribe(data => {
       this.posts = data;
       this.postsUpdated.next([...this.posts]);
     });
-  }
-
-  getPostUpdateListener() {
-    return this.postsUpdated.asObservable();
   }
 
   addPost(title: string, content: string) {
@@ -29,12 +30,8 @@ export class PostService {
       .subscribe(post => {
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(["/"]);
       });
-  }
-
-  getPost(id: string) {
-    return this.http.get<Post>(`http://localhost:8080/api/posts/${id}`);
-    // return { ...this.posts.find(el => el._id == id) };
   }
 
   updatePost(_id: string, title: string, content: string) {
@@ -45,6 +42,7 @@ export class PostService {
         this.posts = this.posts.filter(el => el._id !== post._id);
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(["/"]);
       });
   }
 
@@ -55,5 +53,9 @@ export class PostService {
         this.posts = this.posts.filter(el => el._id !== post._id);
         this.postsUpdated.next([...this.posts]);
       });
+  }
+
+  getPostUpdateListener() {
+    return this.postsUpdated.asObservable();
   }
 }
