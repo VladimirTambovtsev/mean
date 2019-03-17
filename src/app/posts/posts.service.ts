@@ -23,10 +23,14 @@ export class PostService {
     });
   }
 
-  addPost(title: string, content: string) {
+  addPost(title: string, content: string, image: string) {
+    const postData = new FormData();
+    postData.append("title", title);
+    postData.append("content", content);
+    postData.append("image", image, title);
     const post: Post = { _id: null, title, content };
     this.http
-      .post<Post>("http://localhost:8080/api/posts", post)
+      .post<Post>("http://localhost:8080/api/posts", postData)
       .subscribe(post => {
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
