@@ -1,5 +1,6 @@
 import express from 'express'
 import multer from 'multer'
+import passport from 'passport'
 
 // Models
 import Post from '../../models/Post'
@@ -57,7 +58,7 @@ router.get('/', async (req, res) => {
 })
 
 // @descr: create post
-router.post('/', multer({storage: storage}).single('image'), async (req, res) => {
+router.post('/', multer({ storage: storage }).single('image'), passport.authenticate('jwt', { session: false }), async (req, res) => {
     const url = req.protocol + '://' + req.get('host')
     const post = new Post({
       title: req.body.title,
@@ -69,7 +70,7 @@ router.post('/', multer({storage: storage}).single('image'), async (req, res) =>
 })
 
 // @descr: delete post
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const post = await Post.findById(req.params.id);
     if (post) {
         await post.remove()
@@ -80,21 +81,28 @@ router.delete('/:id', async (req, res) => {
 })
 
 // @descr: update post
-router.patch('/:id', multer({ storage: storage }).single('image'), async (req, res) => {
-    let imagePath = req.body.imagePath
+router.patch("/:id", multer({ storage: storage }).single("image"), passport.authenticate("jwt", { session: false }), async (req, res) => {
+    // @TODO: check if user's post
+    // @TODO: validate fields
+
+    let imagePath = req.body.imagePath;
     if (req.file) {
-        const url = req.protocol + '://' + req.get('host')
-        imagePath = url + '/images/' + req.file.filename
+      const url = req.protocol + "://" + req.get("host");
+      imagePath = url + "/images/" + req.file.filename;
     }
-    const post = await Post.findById(req.params.id)
-    
-    await Post.update({ _id: req.params.id }, {
+    const post = await Post.findById(req.params.id);
+
+    await Post.update(
+      { _id: req.params.id },
+      {
         title: req.body.title,
         content: req.body.content,
         imagePath
-    })
+      }
+    );
     res.status(200).json(post);
-})
+  }
+);
 
 
 

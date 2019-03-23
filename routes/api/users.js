@@ -1,4 +1,7 @@
 import express from 'express'
+import jwt from "jsonwebtoken";
+import bcrypt from 'bcrypt'
+
 
 // Models
 import User from '../../models/User'
@@ -49,11 +52,10 @@ router.post('/login', async (req, res) => {
             email: user.email
         }
 
-        jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 3600 }, (err, token) => {
-            res.json({
-                success: true,
-                token: `Bearer ${token}`
-            })
+        const token = await jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 3600 })
+        res.json({
+            success: true,
+            token: `Bearer ${token}`
         })
     } else {
         errors.password = 'Invalid Email or Password'
