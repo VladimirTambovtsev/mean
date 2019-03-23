@@ -1,22 +1,37 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Auth } from "./auth.model";
+
+import { AuthData } from "./auth-data.model";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
+  private token: string;
+
   constructor(private http: HttpClient) {}
 
-  createUser(email: string, password: string) {
-    const auth: Auth = { email, password };
-    this.http
-      .post("http://localhost:8080/api/users/signup", auth)
-      .subscribe(res => console.log(res));
+  getToken() {
+    return this.token;
   }
 
-  loginUser(email: string, password: string) {
-    const auth: Auth = { email, password };
+  createUser(email: string, password: string) {
+    const authData: AuthData = { email: email, password: password };
     this.http
-      .post("http://localhost:8080/api/users/login", auth)
-      .subscribe(res => console.log(res));
+      .post("http://localhost:8080/api/users/signup", authData)
+      .subscribe(response => {
+        console.log(response);
+      });
+  }
+
+  login(email: string, password: string) {
+    const authData: AuthData = { email: email, password: password };
+    this.http
+      .post<{ token: string }>(
+        "http://localhost:8080/api/users/login",
+        authData
+      )
+      .subscribe(response => {
+        const token = response.token;
+        this.token = token;
+      });
   }
 }

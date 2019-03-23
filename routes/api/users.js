@@ -2,9 +2,11 @@ import express from 'express'
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt'
 
-
 // Models
 import User from '../../models/User'
+
+require("dotenv").config();
+
 
 const router = express.Router()
 
@@ -52,11 +54,13 @@ router.post('/login', async (req, res) => {
             email: user.email
         }
 
-        const token = await jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 3600 })
-        res.json({
-            success: true,
-            token: `Bearer ${token}`
-        })
+        jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: 3600 }, (err, token) => {
+            res.json({
+                success: true,
+                token: `Bearer ${token}`
+            })
+        }
+        )
     } else {
         errors.password = 'Invalid Email or Password'
         return res.status(400).json(errors)

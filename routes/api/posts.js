@@ -1,6 +1,7 @@
 import express from 'express'
 import multer from 'multer'
-import passport from 'passport'
+import passport from "passport";
+
 
 // Models
 import Post from '../../models/Post'
@@ -58,30 +59,34 @@ router.get('/', async (req, res) => {
 })
 
 // @descr: create post
-router.post('/', multer({ storage: storage }).single('image'), passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const url = req.protocol + '://' + req.get('host')
+router.post("/", passport.authenticate('jwt', { session: false }), multer({ storage: storage }).single("image"),
+  async (req, res) => {
+    const url = req.protocol + "://" + req.get("host");
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
-      imagePath: url + '/images/' + req.file.filename
+      imagePath: url + "/images/" + req.file.filename
     });
-    await post.save()
-    res.status(200).json(post)
-})
+    await post.save();
+    res.status(200).json(post);
+  }
+);
 
 // @descr: delete post
-router.delete('/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.delete("/:id", passport.authenticate("jwt", { session: false }), async (req, res) => {
     const post = await Post.findById(req.params.id);
     if (post) {
-        await post.remove()
-        res.status(201).json(post)
+      await post.remove();
+      res.status(201).json(post);
     } else {
-        res.status(204)
+      res.status(204);
     }
-})
+  }
+);
 
 // @descr: update post
-router.patch("/:id", multer({ storage: storage }).single("image"), passport.authenticate("jwt", { session: false }), async (req, res) => {
+router.patch("/:id", passport.authenticate('jwt', { session: false }), multer({ storage: storage }).single("image"),
+  async (req, res) => {
     // @TODO: check if user's post
     // @TODO: validate fields
 
