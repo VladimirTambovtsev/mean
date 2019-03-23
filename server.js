@@ -1,3 +1,4 @@
+import path from 'path'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
@@ -20,6 +21,7 @@ const app = express()
 // middleware
 app.use(cors());
 app.use(bodyParser.json())
+app.use('/images', express.static(path.join('images')))
 
 // set API routes
 app.use("/api/posts", posts);

@@ -12,6 +12,10 @@ const PostSchema = new Schema({
         required: true,
         type: String,
         maxlength: 1000
+    },
+    imagePath: {
+        required: true,
+        type: String
     }
 },
     { timestamps: true })
