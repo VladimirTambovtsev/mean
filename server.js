@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 
 import posts from './routes/api/posts'
+import users from "./routes/api/users";
 
 require('dotenv').config()	// reads env file
 
@@ -25,6 +26,7 @@ app.use('/images', express.static(path.join('images')))
 
 // set API routes
 app.use("/api/posts", posts);
+app.use("/api/users", users);
 
 
 const port = process.env.PORT || 8080
